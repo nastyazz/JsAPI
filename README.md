@@ -1,3 +1,8 @@
+# Комментаторская
+Пользователи могут получать задачи и писать к ним комментарии
+## Стэк технолгий
+Express, postgres, docker, alembic
+
 ![База данных](docs/schema.png)
 
 # API Endpoints
@@ -9,7 +14,7 @@
 ### GET /users  
 Получить список пользователей  
 
-### GET /users/:id  
+### GET /users/:id
 Получить пользователя по id  
 
 ### DELETE /users/:id  
