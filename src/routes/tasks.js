@@ -1,9 +1,10 @@
 import { Router } from "express";
 import pool from "../db.js";
+import auth from "../middleware/auth.js";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { user_id, title, description } = req.body;
   try {
     const result = await pool.query(
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM tasks");
     res.json(result.rows);
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
 });
 
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("SELECT * FROM tasks WHERE id = $1", [id]);
@@ -43,7 +44,7 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { id } = req.params;
   const { title, description, status } = req.body;
   try {
@@ -62,7 +63,7 @@ router.put("/:id", async (req, res) => {
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("DELETE FROM tasks WHERE id = $1 RETURNING *", [id]);

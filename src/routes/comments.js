@@ -1,9 +1,10 @@
 import { Router } from "express";
 import pool from "../db.js";
+import auth from "../middleware/auth.js";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { task_id, user_id, content } = req.body;
   try {
     const result = await pool.query(
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   const { task_id } = req.query;
   try {
     const result = await pool.query(
@@ -32,7 +33,7 @@ router.get("/", async (req, res) => {
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("DELETE FROM comments WHERE id = $1 RETURNING *", [id]);
