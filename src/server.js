@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 
+import { setupSwagger } from "./swagger.js"; 
 import usersRouter from "./routes/users.js";
 import tasksRouter from "./routes/tasks.js";
 import commentsRouter from "./routes/comments.js";
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(express.json());
 
+setupSwagger(app);
 app.use("/users", usersRouter);
 app.use("/tasks", tasksRouter);
 app.use("/comments", commentsRouter);

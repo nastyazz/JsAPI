@@ -9,6 +9,32 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
+/**
+ * @openapi
+ * /auth/register:
+ *   post:
+ *     summary: Регистрация пользователя
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: user123
+ *               password:
+ *                 type: string
+ *                 example: myPassword123
+ *     responses:
+ *       201:
+ *         description: Пользователь успешно зарегистрирован
+ *       400:
+ *         description: Пользователь уже существует
+ *       500:
+ *         description: Ошибка регистрации
+ */
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
@@ -32,6 +58,33 @@ router.post("/register", async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     summary: Вход пользователя и получение JWT токена
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: user123
+ *               password:
+ *                 type: string
+ *                 example: myPassword123
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ *       401:
+ *         description: Неверный логин или пароль
+ *       500:
+ *         description: Ошибка входа
+ */
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
