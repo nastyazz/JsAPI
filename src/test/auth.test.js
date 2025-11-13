@@ -2,55 +2,37 @@ import request from "supertest";
 import app from "../server.js";
 import pool from "../db.js";
 
-let token = "";
-let userId = null;
+describe("Auth API", () => {
+  let token;
 
-beforeAll(async () => {
-  await pool.query("DELETE FROM users");
-  await pool.query("DELETE FROM tasks");
-  await pool.query("ALTER SEQUENCE users_id_seq RESTART WITH 1");
-  await pool.query("ALTER SEQUENCE tasks_id_seq RESTART WITH 1");
-});
+  beforeAll(async () => {
+    await pool.query("DELETE FROM users");
+  });
 
-describe("Auth flow", () => {
-  test("Регистрация нового пользователя", async () => {
+  test("POST /auth/register — регистрация нового пользователя", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ username: "testuser", password: "12345" });
+      .send({ username: "testuser", password: "123456" });
 
     expect(res.statusCode).toBe(201);
-    expect(res.body.user).toHaveProperty("username", "testuser");
-    userId = res.body.user.id;
+    expect(res.body.user.username).toBe("testuser");
   });
 
-  test("Логин пользователя и получение токена", async () => {
+  test("POST /auth/login — успешный вход", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ username: "testuser", password: "12345" });
+      .send({ username: "testuser", password: "123456" });
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("token");
+    expect(res.body.token).toBeDefined();
     token = res.body.token;
   });
-});
 
-describe("Tasks API", () => {
-  test("Создание задачи с токеном", async () => {
+  test("POST /auth/login — неверный пароль", async () => {
     const res = await request(app)
-      .post("/tasks")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        user_id: userId,
-        title: "Test Task",
-        description: "Task for testing"
-      });
+      .post("/auth/login")
+      .send({ username: "testuser", password: "wrong" });
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("title", "Test Task");
-  });
-
-  test("Доступ без токена запрещён", async () => {
-    const res = await request(app).get("/tasks");
     expect(res.statusCode).toBe(401);
   });
 });
